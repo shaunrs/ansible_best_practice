@@ -1,0 +1,22 @@
+---
+hosts: all
+
+vars:
+  - FAIL_FAST_TIMEOUT: 15
+
+tasks:
+
+  - name: "Fail-fast: Ensure the server is listening on SSH port"
+    wait_for:
+      host: "{{ ansible_host }}"
+      port: "{{ ansible_port }}"
+      search_regex: "OpenSSH"
+      delay: False
+      timeout: "{{ FAIL_FAST_TIMEOUT }}"
+    connection: local
+    become: False
+
+  # Ping module is not ICMP ping.
+  # It connects to the remote servers, and confirms it can execute python
+  - name: "Fail-fast: Ensure we can SSH to the server"
+    ping:
